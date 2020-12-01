@@ -40,6 +40,8 @@ public class Main {
         try{
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 
+            System.out.println("Server in ascolto su porta 6666.....\n");
+
             if(str.equals(str.toUpperCase())) {
                 dout.writeUTF(str.toLowerCase());
             }
