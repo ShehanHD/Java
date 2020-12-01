@@ -59,11 +59,14 @@ public class Main {
         try {
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 
+            //Fa il split dove ce il operatori e separa due numeri
             String[] operandi = str.split("[+-/*]");
-            System.out.println(operandi);
+
+            //asegno i valori ai variabili
             Float op1 = Float.parseFloat(operandi[0]);
             Float op2 = Float.parseFloat(operandi[1]);
 
+            //faccio i controll
             if (str.contains("+")) {
                 System.out.println(op1 + op2);
                 dout.writeUTF(String.valueOf(op1 + op2));
@@ -81,7 +84,7 @@ public class Main {
                 dout.writeUTF(String.valueOf(op1 / op2));
                 dout.flush();
             } else {
-                System.out.println("Error: hint => num1 [-+/*] num2");
+                System.out.println("Error: hint => num1 [operatore] num2");
             }
 
             dout.close();

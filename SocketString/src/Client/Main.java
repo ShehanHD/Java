@@ -34,24 +34,34 @@ public class Main {
 
     static void toUpper(){
         try{
+            //Crea un steam a connettere a una porta di un host
             Socket s=new Socket("localhost",6666);
+            //crea un nuove scaner che produce valori da steam scelta
             Scanner input = new Scanner(System.in);
 
             System.out.print("Insert your String to Convert: ");
+            //Asegna la stringa che inserito dal utente
             String toConvert = input.next();
 
+            //prepara il contenitore a mandare i dati a server
             DataOutputStream dout=new DataOutputStream(s.getOutputStream());
 
+            //manda i dati al server usandoci encode UTF-8
             dout.writeUTF(toConvert);
 
+            //prepara il contenitore a ricevere i dati a server
             DataInputStream dis = new DataInputStream(s.getInputStream());
+            //asegna il valore che arrivato dal server a str
             String  str = (String)dis.readUTF();
 
-            System.out.println("From Server= "+str);
+            //stampa il risultato
+            System.out.println("Result = " + str);
 
+            //pulire Buffer
             dout.flush();
+            //chiudere output
             dout.close();
-
+            //chiudo server
             s.close();
         }
         catch (Exception e){
@@ -64,7 +74,7 @@ public class Main {
             Socket s=new Socket("localhost",6666);
             Scanner input = new Scanner(System.in);
 
-            System.out.print("Inserisci il tua funziona: ");
+            System.out.print("Inserisci il tua funziona (es: num1 [operatore] num2): ");
             String eq = input.next();
 
             DataOutputStream dout=new DataOutputStream(s.getOutputStream());
