@@ -8,6 +8,7 @@ public class Main {
         try {
             ServerSocket myServer = new ServerSocket(9999);
             int x;
+
             while (true) {
                 Socket S = myServer.accept();
                 x = S.getInputStream().read();
