@@ -44,7 +44,7 @@ public class Main {
             String toConvert = input.next();
 
             //prepara il contenitore a mandare i dati a server
-            DataOutputStream dout=new DataOutputStream(s.getOutputStream());
+            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 
             //manda i dati al server usandoci encode UTF-8
             dout.writeUTF(toConvert);
