@@ -1,5 +1,8 @@
 package best.wecode.shared;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.net.Socket;
 
@@ -11,7 +14,7 @@ public class User {
     public boolean register(Socket socket, String name, String surname, String password, String repeatPassword) throws IOException {
         this.name = cleanString(name);
         this.surname = cleanString(surname);
-        if(comparePassword(password, repeatPassword)){
+        if(password.equals(repeatPassword)){
             this.password = password;
         }
         else{
@@ -26,12 +29,5 @@ public class User {
         return true;
     }
 
-    private String cleanString(String str) throws IOException {
-        return str.strip();
-    }
-
-    private Boolean comparePassword(String pass1, String pass2){
-        return pass1.equals(pass2);
-    }
-
+    private String cleanString(@NotNull String str) throws IOException { return str.strip(); }
 }

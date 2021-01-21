@@ -22,14 +22,14 @@ public class Api {
         // Get data from server, unpack and prepare to create Items
 
         // use a loop to populate the list
-            iList.add(new Item("100", "a", "s", "a", "a"));
+            iList.add(new Item("100", "a", "s", "a", "a", "2021-01-25", "2021-01-30"));
 
         return iList;
     }
 
     public Item getItem(String id){
         // Get data from server
-        Item item = new Item("100", "a", "a", "s", "s");
+        Item item = new Item("100", "a", "a", "s", "s", "2021-01-25", "2021-01-30");
 
         return item;
     }

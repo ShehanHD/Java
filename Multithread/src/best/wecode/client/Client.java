@@ -13,14 +13,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Client {
-    String nomeServer = "localhost";
+    String host = "localhost";
     int port = 6789;
     Socket socket;
     Scanner input;
 
-    public Client() throws IOException {
+    public Client() {
         input = new Scanner(System.in);
-        socket = new Socket(nomeServer,port);
     }
 
     public static void main(String[] args) throws IOException {
@@ -28,7 +27,11 @@ public class Client {
         boolean isConnected = client.connect();
 
         if (isConnected) {
+            System.out.println("Connected");
             client.menu();
+        }
+        else{
+            System.out.println("Connection Error!");
         }
     }
 
@@ -38,11 +41,10 @@ public class Client {
         System.out.println("Connecting...");
         try
         {
-            System.out.println("Connected");
+            socket = new Socket(host, port);
             connected = true;
         } catch (Exception e)
         {
-            System.out.println("Connection Error!");
             System.out.println(e.getMessage());
         }
 
@@ -146,7 +148,9 @@ public class Client {
     }
 
     private void printDashboard(List<Item> items){
+        System.out.println("\tDashboard\n");
 
+        System.out.println("\tItem COD\tName\tStarting Bid\tLast Bid\n");
     }
 
     private void biddingRoom(String id) throws IOException {
