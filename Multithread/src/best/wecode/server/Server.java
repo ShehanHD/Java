@@ -1,84 +1,108 @@
 package best.wecode.server;
 
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.*;
 import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Server {
-
-    public static void main (String[] args) {
-        Server tcpServer = new Server();
-        tcpServer.start();
-    }
-
-    public void start()
+class Server {
+    public static void main(String[] args)
     {
-        try
-        {
-            ServerSocket serverSocket = new ServerSocket(6789);
-            while (true)
-            {
-                System.out.println("Server is listening on: " + serverSocket);
-                Socket socket = serverSocket.accept();
-                System.out.println("New client: " + socket);
-                ServerThread serverThread = new ServerThread(socket);
-                serverThread.start();
-            }
-        }
-        catch (Exception e)
-        {
-            System.out.println(e);
-            System.out.println("Server Error!");
-        }
-    }
-}
+        ServerSocket server = null;
 
-class ServerThread extends Thread
-{
-    ServerSocket server      = null;
-    Socket client            = null;
-    String stringaRicevuta   = null;
-    String stringaModificata = null;
-
-    BufferedReader   inDalClient;
-    DataOutputStream outVersoClient;
-
-    public ServerThread (Socket socket) {
-        this.client = socket;
-    }
-
-    public void run() {
         try {
-            comunica();
+            server = new ServerSocket(6789);
+            server.setReuseAddress(true);
+
+            while (true) {
+                Socket client = server.accept();
+
+                System.out.println("New client connected " + client.getInetAddress().getHostAddress());
+
+                ClientHandler clientSock = new ClientHandler(client);
+
+                new Thread(clientSock).start();
+            }
         }
-        catch (Exception e) {
-            e.printStackTrace(System.out);
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (server != null) {
+                try {
+                    server.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    public void comunica ()throws Exception {
+    private static class ClientHandler implements Runnable {
+        private final Socket clientSocket;
+        List<User> user = new ArrayList<>();
 
-        inDalClient      = new BufferedReader(new InputStreamReader (client.getInputStream()));
-        outVersoClient   = new DataOutputStream(client.getOutputStream());
-        while (true) {
+        public ClientHandler(Socket socket)
+        {
+            this.clientSocket = socket;
+        }
 
-            stringaRicevuta = inDalClient.readLine();
-            if (stringaRicevuta == null || stringaRicevuta.equals("FINE")) {
-                outVersoClient.writeBytes(stringaRicevuta+" (=>server in chiusura...)" + '\n');
-                System.out.println("Echo sul server in chiusura  :" + stringaRicevuta);
-                break;
+        public void run()
+        {
+            PrintWriter out = null;
+            BufferedReader in = null;
+            try {
+                out = new PrintWriter(clientSocket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                String line;
+
+                while ((line = in.readLine()) != null) {
+                    System.out.printf("Sent from the client: %s\n", line);
+                    String[] param = line.split(";");
+
+                    switch (param[0]){
+                        case "login" -> out.println(login(param[1], param[2]));
+                        case "register" -> out.println(register(param[1], param[2], param[3]));
+                    }
+                }
             }
-            else {
-                // outVersoClient.writeBytes(+stringaRicevuta);
-                outVersoClient.writeBytes(stringaRicevuta+" (ricevuta e ritrasmessa dal server)" + '\n');
-                System.out.println("6 Echo sul server :" + stringaRicevuta);
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                    if (in != null) {
+                        in.close();
+                        clientSocket.close();
+                    }
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
-        outVersoClient.close();
-        inDalClient.close();
-        System.out.println("Closing socket: " + client);
-        client.close();
+        private String login(String Username, String Password) {
+            user.add(new User("Shehan", "H.D", "1234"));
+            user.add(new User("bbb", "aaa", "1234"));
+
+            for (User u : user) {
+                if (u.name.equals(Username) && u.password.equals(Password)) {
+                    return "true";
+                }
+            }
+
+            return "false";
+        }
+
+        private String register(String name, String surname, String password) {
+            user.add(new User(name, surname, password));
+
+            return "true";
+        }
     }
 }

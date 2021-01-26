@@ -1,14 +1,14 @@
 package best.wecode.client;
 
-import best.wecode.shared.Api;
-import best.wecode.shared.Item;
-import best.wecode.shared.User;
+import best.wecode.helpers.Api;
+import best.wecode.helpers.Item;
+import best.wecode.helpers.User;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,6 +25,11 @@ public class Client {
     public static void main(String[] args) throws IOException {
         Client client = new Client();
         boolean isConnected = client.connect();
+
+        //int[] x = {1, 1, 1};
+        //String xx = Arrays.toString(x);
+        //String[] xxx = (xx.replaceAll("\\[|\\]", "").split(", "));
+        //System.out.println(Arrays.toString(xxx));
 
         if (isConnected) {
             System.out.println("Connected");
@@ -69,10 +74,12 @@ public class Client {
     }
 
     private void login() throws IOException{
-        User user = new User();
+        User user = new User(socket);
         String name;
         String password;
-        boolean done;
+        Boolean done;
+        DataOutputStream dout = new DataOutputStream(socket.getOutputStream());
+        DataInputStream dis = new DataInputStream(socket.getInputStream());
 
         do {
             System.out.print("Username: ");
@@ -80,7 +87,7 @@ public class Client {
             System.out.print("Password: ");
             password = input.next();
 
-            done = user.login(socket, name, password);
+            done = user.login(name, password);
 
             if(!done){
                 System.out.println("Please check your name or password");
@@ -93,7 +100,7 @@ public class Client {
     }
 
     private void register() throws IOException {
-        User user = new User();
+        User user = new User(socket);
         String name;
         String surname;
         String password;
@@ -111,13 +118,13 @@ public class Client {
             System.out.print("Repeat-Password: ");
             repeatPassword = input.next();
 
-            done = user.register(socket, name, surname, password, repeatPassword);
+            done = user.register(name, surname, password, repeatPassword);
 
             if(!done){
                 System.out.println("\nOops, Something went wrong!\nInsert anything for try again!\n0 for Exit\nInsert> ");
                 uInput = input.next();
 
-                if(uInput.contains("0")){
+                if(uInput.equals("0")){
                     done = true;
                 }
             }
@@ -133,30 +140,52 @@ public class Client {
         List<Item> items;
 
         do {
-            System.out.println("\tDASHBOARD\n");
+            System.out.println("\t\t\t\t\t\t\t\t\t\tDASHBOARD");
             // print items
             items = api.getItems();
             printDashboard(items);
 
-            System.out.println("\n0 to exit\nOr select your item code\n> ");
+            System.out.print("\n0 to logout\nOr select your item code\nInsert > ");
             uInput = input.next();
 
             // call bidding room
-            biddingRoom(uInput);
+            if(!uInput.equals("0")) {
+                biddingRoom(uInput);
+            }
 
-        }while (!uInput.contains("0"));
+        }while (!uInput.equals("0"));
     }
 
     private void printDashboard(List<Item> items){
-        System.out.println("\tDashboard\n");
+        System.out.format("%15s%15s%15s%15s%15s%15s\n", "Item COD", "Name", "Starting Bid", "Last Bid", "Starts At", "Ends At");
 
-        System.out.println("\tItem COD\tName\tStarting Bid\tLast Bid\n");
+        for (Item item : items) {
+            System.out.format("%15s%15s%15s%15s%15s%15s\n", item.cod, item.name, item.openingBid, item.lastBid, item.startsAt, item.endsAt);
+        }
     }
 
     private void biddingRoom(String id) throws IOException {
         Api api = new Api(socket);
         Item item;
+        String uInput;
 
-        item = api.getItem(id);
+        do {
+            item = api.getItem(id);
+
+            System.out.format("%15s%15s%15s%15s%15s%15s\n", "Item COD", "Name", "Starting Bid", "Last Bid", "Starts At", "Ends At");
+            System.out.format("%15s%15s%15s%15s%15s%15s\n", item.cod, item.name, item.openingBid, item.lastBid, item.startsAt, item.endsAt);
+
+            System.out.print("\n0 to go back to Dashboard\nOr insert a new Bid\nInsert > ");
+            uInput = input.next();
+
+            if(!uInput.equals("0")){
+                if (api.newBid(uInput)) {
+                    System.out.println("New bid successfully submitted");
+                } else {
+                    System.out.println("Something went wrong, please try again");
+                }
+            }
+        }while(!uInput.equals("0"));
+
     }
 }

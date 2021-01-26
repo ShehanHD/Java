@@ -132,6 +132,17 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Application.Client2" />
       <item itemvalue="Application.Client" />
@@ -165,6 +176,7 @@
       <workItem from="1610786577202" duration="700000" />
       <workItem from="1610875757583" duration="2051000" />
       <workItem from="1611084755715" duration="1421000" />
+      <workItem from="1611591816434" duration="20306000" />
     </task>
     <servers />
   </component>

@@ -1,4 +1,4 @@
-package best.wecode.shared;
+package best.wecode.helpers;
 
 import java.io.*;
 import java.net.Socket;
@@ -23,6 +23,7 @@ public class Api {
 
         // use a loop to populate the list
             iList.add(new Item("100", "a", "s", "a", "a", "2021-01-25", "2021-01-30"));
+            iList.add(new Item("100", "a", "s", "a", "a", "2021-01-25", "2021-01-30"));
 
         return iList;
     }
@@ -32,5 +33,9 @@ public class Api {
         Item item = new Item("100", "a", "a", "s", "s", "2021-01-25", "2021-01-30");
 
         return item;
+    }
+
+    public boolean newBid(String uInput) {
+        return true;
     }
 }

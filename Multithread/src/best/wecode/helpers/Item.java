@@ -1,4 +1,4 @@
-package best.wecode.shared;
+package best.wecode.helpers;
 
 public class Item {
     public String cod;
