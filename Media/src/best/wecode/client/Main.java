@@ -24,10 +24,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Main client = new Main();
 
-        client.sentNumbers();
+        client.sendNumbers();
     }
 
-    public void sentNumbers() throws IOException {
+    public void sendNumbers() throws IOException {
         String regex = "[0-9]+";
         Pattern p = Pattern.compile(regex);
         String toSend = "";
@@ -35,7 +35,7 @@ public class Main {
         int i = 0;
 
         do {
-            System.out.print("\nAggiungi numero "+ (i+1) +"\nexit per Uscire\nInserisci > ");
+            System.out.print("\nAggiungi "+ (i+1) +"° numero\nexit per Uscire\nInserisci > ");
             x = input.next();
 
             Matcher m = p.matcher(x);
