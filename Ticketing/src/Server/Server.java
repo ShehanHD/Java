@@ -3,6 +3,7 @@ package Server;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.ParseException;
 
 public class Server {
     private static final Cinema cinema = new Cinema();
@@ -16,7 +17,7 @@ public class Server {
 
             while (true){
                 Socket newClient = server.accept();
-                System.out.println("New client connected => " + newClient.getInetAddress().getHostAddress());
+
                 BookingHandler clientSock = new BookingHandler(newClient);
                 new Thread(clientSock).start();
             }
@@ -61,7 +62,7 @@ public class Server {
                         case "getUsers" -> cinema.printUsers();
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 e.printStackTrace();
             }
             finally {
@@ -90,4 +91,3 @@ public class Server {
         }
     }
 }
-

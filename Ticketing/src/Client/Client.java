@@ -17,6 +17,8 @@ public class Client {
     private static final int port = 6666;
     private static Socket socket;
     private static Scanner input;
+    private static long[] countDown = new long[0];
+    private static String line = "";
 
     public Client() throws IOException {
         socket = new Socket(host, port);
@@ -26,11 +28,9 @@ public class Client {
     public static void main(String[] args) throws IOException, ParseException {
         Client client = new Client();
         String userInput;
-        long[] countDown = new long[0];
 
         do {
-            if (countDown.length == 0)
-                countDown = client.getTimer();
+            countDown = client.getTimer();
 
             if ((countDown[0] == 0 && countDown[1] >= 30) || (countDown[0] > 0)) {
                 socket = new Socket(host, port);
@@ -54,14 +54,27 @@ public class Client {
         socket.close();
     }
 
+    public void send(String s) throws IOException {
+        PrintWriter dout = new PrintWriter(socket.getOutputStream(), true);
+        dout.println(s);
+    }
+
+    public String get() throws IOException {
+        DataInputStream dis = new DataInputStream(socket.getInputStream());
+        return dis.readUTF();
+    }
+
     private void getUsers() throws IOException {
         send("api/getUsers");
     }
 
     public long[] getTimer() throws IOException, ParseException {
-        send("api/getTimer");
 
-        String line = get();
+        if (line.isEmpty()) {
+            send("api/getTimer");
+            line = get();
+        }
+
         String[] dt = line.split(";");
 
         String dateNow = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
@@ -77,22 +90,14 @@ public class Client {
         Duration date = Duration.between(today.atStartOfDay(), showDay.atStartOfDay());
         Duration dateTime = Duration.between(tNow.toInstant(), tShow.toInstant());
 
-        return new long[]{date.toDays(), dateTime.toMinutes()};
+        long x = dateTime.toMinutes() < 0 ? dateTime.toMinutes() * -1 : dateTime.toMinutes();
+
+        return new long[]{date.toDays(), x};
     }
 
     public void getSeats() throws IOException {
         send("api/getSeats");
         printHall(get());
-    }
-
-    public void send(String s) throws IOException {
-        PrintWriter dout = new PrintWriter(socket.getOutputStream(), true);
-        dout.println(s);
-    }
-
-    public String get() throws IOException {
-        DataInputStream dis = new DataInputStream(socket.getInputStream());
-        return dis.readUTF();
     }
 
     public void bookSeat() throws IOException {
@@ -115,8 +120,12 @@ public class Client {
 
             if (str.equals("0")) {
                 System.out.println("Questa sedia e gia riservata!");
-            } else {
-                confermation(row, col);
+            }
+            else if(str.equals("expire")){
+                System.out.println("Tempo Scaduto");
+            }
+            else {
+                confirmation(row, col);
             }
         }
         else {
@@ -124,7 +133,7 @@ public class Client {
         }
     }
 
-    private void confermation(String row, String col) throws IOException {
+    private void confirmation(String row, String col) throws IOException {
         socket = new Socket(host, port);
         String name, surname, tele, s2;
 
@@ -142,6 +151,9 @@ public class Client {
 
         if (str2.equals("0")){
             System.out.println("Errore, reprova!");
+        }
+        else if(str2.equals("expire")){
+            System.out.println("Tempo Scaduto");
         }
         else {
             System.out.println("prenotazione di successo!");
