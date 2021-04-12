@@ -77,7 +77,9 @@ public class Client {
         Duration date = Duration.between(today.atStartOfDay(), showDay.atStartOfDay());
         Duration dateTime = Duration.between(tNow.toInstant(), tShow.toInstant());
 
-        return new long[]{date.toDays(), dateTime.toMinutes()};
+        long x = dateTime.toMinutes() < 0 ? dateTime.toMinutes() * -1 : dateTime.toMinutes();
+
+        return new long[]{date.toDays(), x};
     }
 
     public void getSeats() throws IOException {

@@ -9,7 +9,7 @@ import java.util.List;
 class Cinema{
     String[][] hall = new String[10][15];
     List<User> user = new ArrayList<>();
-    String closingDate = "2021-03-08;11:35:00";
+    String closingDate = "2021-04-08;12:35:00";
 
     Cinema(){
         for (int i = 0; i < 10; i++){
