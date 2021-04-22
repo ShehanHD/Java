@@ -12,8 +12,8 @@ import java.util.List;
 @RequestMapping("api/v1/students")
 public class StudentController {
     private static final List<Student> STUDENTS = Arrays.asList(
-            new Student(1, "test"),
-            new Student(2, "test2")
+            new Student(1, "Pippo"),
+            new Student(2, "Bello")
     );
 
     @GetMapping(path = "{studentId}")
